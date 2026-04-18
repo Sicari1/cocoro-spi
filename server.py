@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import json
+import os
 import sqlite3
 from datetime import datetime, timedelta
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -654,8 +655,9 @@ class CocoroHandler(SimpleHTTPRequestHandler):
 
 def main():
     init_db()
-    server = ThreadingHTTPServer(("0.0.0.0", 8080), CocoroHandler)
-    print("Serving Cocoro SPI app on http://0.0.0.0:8080")
+    port = int(os.environ.get("PORT", "8080"))
+    server = ThreadingHTTPServer(("0.0.0.0", port), CocoroHandler)
+    print(f"Serving Cocoro SPI app on http://0.0.0.0:{port}")
     server.serve_forever()
 
 

@@ -31,3 +31,5 @@ http://localhost:8080
 ## Deployment
 
 `render.yaml` is included for Render deployment.
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Sicari1/cocoro-spi)
