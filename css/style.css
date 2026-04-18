@@ -1802,11 +1802,12 @@ body {
   position: absolute;
   inset: 0;
   background-image:
-    url("https://corporate.sanrio.co.jp/wp-content/themes/sanrio/assets/images/business/brands/img_cinnamoroll.png"),
+    url("../image/img_cinnamoroll.png"),
+    url("../image/다운로드.avif"),
     radial-gradient(circle at center, rgba(255,255,255,0.9) 0%, rgba(216,238,255,0.9) 44%, rgba(231,241,255,0.86) 100%);
-  background-repeat: no-repeat, no-repeat;
-  background-position: right 12px bottom 8px, center;
-  background-size: 62%, cover;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-position: right 18px bottom 10px, center center, center;
+  background-size: 58%, cover, cover;
   opacity: 0.95;
 }
 
