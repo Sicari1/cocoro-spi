@@ -102,6 +102,9 @@
           <span class="text-muted">出題形式参考: <a href="${question.sourceUrl}" target="_blank" rel="noreferrer">${window.APP.escapeHtml(question.sourceTitle)}</a></span>
         `;
         window.APP.showToast(isCorrect ? "正解です。" : "不正解です。根拠を確認しましょう。");
+        window.dispatchEvent(new CustomEvent("cocoro:answer-recorded", {
+          detail: { questionId: question.id, correct: isCorrect, mode: "practice" },
+        }));
         window.APP.notifyDataUpdated();
       });
     });

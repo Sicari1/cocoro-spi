@@ -301,6 +301,82 @@ def build_seed_questions():
     for index, (stem, choices, answer) in enumerate(logic_rows):
         q("nonverbal", "reasoning", "推論", 3, stem, choices, answer, logic_explanations[index], "推論は、日本語を短い論理式に置き換えると整理しやすくなります。", SOURCE_PORT, ["推論"])
 
+    proverb_rows = [
+        ("『石の上にも三年』に最も近い意味を選びなさい。", ["すぐに結果を求めず続けることが大切", "安全第一で動くことが大切", "人に頼るほうが速い", "意見は変えないほうがよい"], 0),
+        ("『備えあれば憂いなし』に最も近い意味を選びなさい。", ["準備しておけば不安を減らせる", "心配ごとは忘れるべきだ", "急いで決めればうまくいく", "迷ったら人に合わせる"], 0),
+        ("『急がば回れ』に最も近い意味を選びなさい。", ["近道に見えても安全で確実な方法を選ぶ", "急げるときは一気に進む", "回り道はいつも損である", "最初の考えを変えない"], 0),
+        ("『塵も積もれば山となる』に最も近い意味を選びなさい。", ["小さな積み重ねが大きな成果になる", "大きな目標は意味がない", "一度の努力ですべて決まる", "量よりも運が重要だ"], 0),
+    ]
+    for stem, choices, answer in proverb_rows:
+        q("verbal", "vocabulary", "ことわざ", 1, stem, choices, answer, "SPIのことわざは暗記だけでなく、仕事や勉強の場面に言い換えると意味が取りやすくなります。", "抽象表現は『つまりどういう行動か』に直してみてください。", SOURCE_PORT, ["ことわざ"])
+
+    honorific_rows = [
+        ("『部長は会議室にいます』を尊敬語として最も適切なものを選びなさい。", ["部長は会議室にいらっしゃいます", "部長は会議室におられますです", "部長は会議室に参ります", "部長は会議室でございます"], 0),
+        ("『後ほど確認します』を謙譲語として最も適切なものを選びなさい。", ["後ほど確認いたします", "後ほどご確認になります", "後ほど確認されます", "後ほど確認でございます"], 0),
+        ("『言う』の尊敬語として最も適切なものを選びなさい。", ["おっしゃる", "申す", "いたす", "存じる"], 0),
+        ("『見る』の謙譲語として最も適切なものを選びなさい。", ["拝見する", "ご覧になる", "見られる", "お見えになる"], 0),
+    ]
+    for stem, choices, answer in honorific_rows:
+        q("verbal", "reading", "敬語", 2, stem, choices, answer, "敬語は『相手を上げるか、自分を下げるか』の方向で整理すると安定します。", "尊敬語・謙譲語・丁寧語を混ぜず、主語が誰かをまず確認してください。", SOURCE_LANGUAGE, ["敬語"])
+
+    passage_rows = [
+        (
+            "ある受験者は、SPIでは『知らない問題を考えすぎるより、取れる問題を確実に取るほうが得点が安定する』と考え、難問に時間を使いすぎない方針を立てた。この文の要点として最も適切なものを選びなさい。",
+            ["難問に固執せず、取れる問題を確実に取るほうが安定する", "SPIでは難問を解けないと合格できない", "SPIはすべての問題に同じ時間をかけるべきだ", "時間配分より知識量だけが重要だ"],
+            0,
+        ),
+        (
+            "企業研究では、情報量の多さより『自分が何を軸に企業を見るか』を決めるほうが比較しやすい。たとえば仕事内容、評価制度、勤務地など軸を先に決めると、複数社を並べても迷いにくくなる。筆者の主張として最も適切なものを選びなさい。",
+            ["比較の前に見る軸を決めると企業研究しやすい", "企業研究は情報量が多いほど必ず成功する", "勤務地だけ見れば十分である", "比較せず第一印象で決めるべきだ"], 0,
+        ),
+        (
+            "非言語では公式を覚えるだけでは不十分で、どの場面でその式を使うのかを判断できることが重要だ。たとえば割合なのか増加率なのかを見分けられないと、正しい公式を知っていても点につながらない。最も適切な要点を選びなさい。",
+            ["公式の暗記だけでなく、使い分けの判断が必要である", "非言語は公式さえ暗記すれば十分である", "割合と増加率は同じ意味である", "非言語は読む力だけで解ける"], 0,
+        ),
+        (
+            "面接準備では、完璧な回答を暗記するよりも『どんな質問でも自分の経験に戻れる柱』を作っておくほうが応用しやすい。柱があれば聞き方が変わっても答えの軸はぶれにくい。筆者の考えに最も近いものを選びなさい。",
+            ["暗記よりも経験の柱を準備するほうが応用しやすい", "面接では同じ文章を暗唱するのが最善だ", "質問が変わることはないので準備は不要だ", "経験より一般論を増やすべきだ"], 0,
+        ),
+    ]
+    for stem, choices, answer in passage_rows:
+        q("verbal", "reading", "長文読解", 3, stem, choices, answer, "長文読解では細部より先に『筆者が何を言いたいか』をつかみます。対比や結論の位置に注目すると判断しやすくなります。", "選択肢は本文の一部だけを強調してズラすことがあります。主張全体と一致するかを見てください。", SOURCE_PORT, ["長文読解"])
+
+    profit_rows = [
+        ("原価1,200円の商品に25%の利益を見込んで定価をつけた。定価はいくらか。", ["1,500円", "1,440円", "1,320円", "1,600円"], 0),
+        ("定価8,000円の商品を15%引きで売った。販売価格はいくらか。", ["6,800円", "7,200円", "6,400円", "7,400円"], 0),
+        ("原価2,000円の商品を2,500円で販売した。利益率は何%か。", ["25%", "20%", "30%", "15%"], 0),
+        ("定価5,000円の商品を2割引きで販売し、それでも原価4,000円を上回った。利益はいくらか。", ["0円", "500円", "800円", "1,000円"], 0),
+    ]
+    for stem, choices, answer in profit_rows:
+        q("nonverbal", "calculation", "損益算", 2, stem, choices, answer, "損益算は『何に対する割合か』を明確にするのが基本です。利益率は原価基準、値引き率は定価基準です。", "原価・定価・売価の3つを混同しないように、まず図にして整理してください。", SOURCE_PRACTICE, ["損益算"])
+
+    passing_rows = [
+        ("長さ150mの列車が長さ210mの橋を渡りきるのに18秒かかった。列車の速さは毎秒何mか。", ["20m", "18m", "15m", "24m"], 0),
+        ("長さ120mの電車が、反対方向から来る長さ80mの電車とすれ違うのに5秒かかった。2本の相対速度は毎秒何mか。", ["40m", "32m", "24m", "50m"], 0),
+        ("長さ90mの列車が、時速54kmで走っている。長さ60mのホームを通過するのに何秒かかるか。", ["10秒", "8秒", "12秒", "9秒"], 0),
+        ("長さ160mの列車がトンネルを通過するのに14秒かかった。列車の速さは毎秒25mである。トンネルの長さは何mか。", ["190m", "180m", "200m", "210m"], 0),
+    ]
+    for stem, choices, answer in passing_rows:
+        q("nonverbal", "calculation", "通過算", 3, stem, choices, answer, "通過算では『先頭が入り始めてから最後尾が抜けるまで』に進む距離は、通過対象の長さと列車の長さの合計です。", "橋・トンネル・列車の長さを足すのか引くのかを、通過の始まりと終わりで考えてください。", SOURCE_PRACTICE, ["通過算"])
+
+    age_rows = [
+        ("父は42歳、子は12歳である。何年後に父の年齢が子の年齢の2倍になるか。", ["18年後", "16年後", "20年後", "14年後"], 0),
+        ("兄は現在20歳、弟は14歳である。何年前に兄の年齢が弟の年齢の2倍だったか。", ["8年前", "6年前", "4年前", "10年前"], 1),
+        ("Aさんは現在30歳、Bさんは24歳である。何年後に2人の年齢の和が70歳になるか。", ["8年後", "10年後", "6年後", "12年後"], 0),
+        ("母は現在45歳、娘は15歳である。何年前に母の年齢は娘の3倍だったか。", ["0年前", "5年前", "10年前", "15年前"], 0),
+    ]
+    for stem, choices, answer in age_rows:
+        q("nonverbal", "reasoning", "年齢算", 2, stem, choices, answer, "年齢算は、現在の年齢を基準にして『同じ年数だけ増減する』ことを式にします。", "比が出る問題でも、いきなり比で考えず現在から前後にずらす式を立てると安定します。", SOURCE_NONVERBAL, ["年齢算"])
+
+    table_rows = [
+        ("A〜Dの4人が1週間で解いた問題数は、A:18、B:24、C:15、D:27である。平均は何問か。", ["21問", "20問", "19問", "22問"], 0),
+        ("ある模試の3科目合計点が、国語72点、数学65点、英語83点だった。平均との差は何点か。", ["9点", "8点", "10点", "7点"], 0),
+        ("売上が月ごとに 120, 150, 135, 165 万円だった。最も増加幅が大きい月間変化は何万円か。", ["30万円", "15万円", "45万円", "20万円"], 0),
+        ("5日間の来店者数が 40, 55, 50, 65, 40 人だった。中央値は何人か。", ["50人", "55人", "40人", "65人"], 0),
+    ]
+    for stem, choices, answer in table_rows:
+        q("nonverbal", "reasoning", "表の読み取り", 2, stem, choices, answer, "表の読み取り系は式より先に、何を比較するのかを一行で決めることが大切です。", "平均・中央値・増加幅など、問われている指標の意味を取り違えないでください。", SOURCE_PORT, ["表の読み取り"])
+
     english_rows = [
         ("Select the word closest in meaning to 'reliable'.", ["trustworthy", "fragile", "distant", "silent"], 0, "reliable means you can trust it or depend on it."),
         ("Select the word closest in meaning to 'improve'.", ["enhance", "delay", "refuse", "borrow"], 0, "improve means make something better."),
@@ -310,6 +386,10 @@ def build_seed_questions():
         ("She (   ) the report before sending it yesterday.", ["checked", "checks", "checking", "check"], 0, "Yesterday is a past-time marker, so the past form is needed."),
         ("We need data that is clear and easy to (   ).", ["understand", "understood", "understanding", "understands"], 0, "After 'to', the base form is used."),
         ("No sooner (   ) the deadline announced than the team revised the plan.", ["was", "were", "had", "did"], 2, "This inverted structure takes 'had' with the past participle."),
+        ("Choose the best word to complete the sentence: The manager asked us to submit the report (   ) Friday afternoon.", ["by", "for", "since", "during"], 0, "'By Friday afternoon' means no later than that time."),
+        ("Choose the best word to complete the sentence: This manual is too technical, so please make it easier for new staff to (   ).", ["follow", "following", "followed", "follows"], 0, "After 'to', use the base form. 'Follow' fits the meaning of understanding steps."),
+        ("Select the word closest in meaning to 'efficient'.", ["productive", "fragile", "casual", "uncertain"], 0, "efficient means achieving good results without wasting time or effort."),
+        ("Select the opposite of 'accurate'.", ["incorrect", "careful", "formal", "silent"], 0, "accurate means correct, so incorrect is the opposite."),
     ]
     for stem, choices, answer, explanation in english_rows:
         difficulty = 2 if "No sooner" not in stem else 3
