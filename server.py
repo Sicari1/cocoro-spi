@@ -117,6 +117,25 @@ SOURCE_SANRIO_WORLD = source_note(
     "公式紹介文と世界観リンクの参照元。",
 )
 
+SEED_MESSAGES = [
+    {
+        "author": "Jinjjang",
+        "message": "코코, 오늘도 너무 무리하지 말고 한 문제씩만 차분하게. 이 사이트는 네가 웃으면서 쓰면 그걸로 충분해.",
+    },
+    {
+        "author": "Cocoro Board",
+        "message": "SPIは一気に仕上げるより、毎日少しずつ型に慣れるほうが安定します。今日も1セットで十分です。",
+    },
+]
+
+NOTICE_ITEMS = [
+    "SPIの非言語は『何を求めるか』を日本語で一度言い直すと式ミスが減ります。",
+    "シナモロールはサンリオ公式プロフィールで、雲の上で生まれた白いこいぬとして紹介されています。",
+    "SPI言語は語彙そのものより、二語の関係や文脈の見抜き方が安定すると伸びやすいです。",
+    "シナモロールの誕生日は3月6日。ふわふわのしっぽがシナモンロールみたいだからこの名前になりました。",
+    "英語は全文を訳すより、時制・前置詞・固定表現の目印を先に拾うと速くなります。",
+]
+
 
 def make_question(qid, category, qtype, subtype, difficulty, question, choices, answer, explanation, tips, source, keywords):
     return {
@@ -454,6 +473,12 @@ def init_db():
             breakdown_json TEXT NOT NULL,
             question_ids_json TEXT NOT NULL
         );
+        CREATE TABLE IF NOT EXISTS messages (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            author TEXT NOT NULL,
+            message TEXT NOT NULL,
+            created_at TEXT NOT NULL
+        );
         """
     )
     for question in build_seed_questions():
@@ -481,6 +506,13 @@ def init_db():
                 json.dumps(question["keywords"], ensure_ascii=False),
             ),
         )
+    message_count = cursor.execute("SELECT COUNT(*) FROM messages").fetchone()[0]
+    if message_count == 0:
+        for item in SEED_MESSAGES:
+            cursor.execute(
+                "INSERT INTO messages (author, message, created_at) VALUES (?, ?, ?)",
+                (item["author"], item["message"], now_iso()),
+            )
     connection.commit()
     connection.close()
 
@@ -603,6 +635,24 @@ def fetch_summary():
     }
 
 
+def fetch_messages(limit=24):
+    connection = get_connection()
+    rows = connection.execute(
+        "SELECT id, author, message, created_at FROM messages ORDER BY id DESC LIMIT ?",
+        (limit,),
+    ).fetchall()
+    connection.close()
+    return [
+        {
+            "id": row["id"],
+            "author": row["author"],
+            "message": row["message"],
+            "createdAt": row["created_at"],
+        }
+        for row in rows
+    ]
+
+
 def bootstrap_payload():
     return {
         "questions": fetch_questions(),
@@ -638,6 +688,8 @@ def bootstrap_payload():
             SOURCE_SANRIO,
             SOURCE_SANRIO_WORLD,
         ],
+        "notices": NOTICE_ITEMS,
+        "messages": fetch_messages(),
         "generatedAt": now_iso(),
     }
 
@@ -683,6 +735,9 @@ class CocoroHandler(SimpleHTTPRequestHandler):
         if parsed.path == "/api/health":
             json_response(self, {"ok": True, "time": now_iso()})
             return
+        if parsed.path == "/api/messages":
+            json_response(self, {"messages": fetch_messages()})
+            return
         if parsed.path == "/":
             self.path = "/index.html"
         return super().do_GET()
@@ -708,6 +763,9 @@ class CocoroHandler(SimpleHTTPRequestHandler):
             return
         if parsed.path == "/api/exams":
             self.handle_exam(payload)
+            return
+        if parsed.path == "/api/messages":
+            self.handle_message(payload)
             return
         json_response(self, {"error": "not_found"}, status=404)
 
@@ -799,6 +857,27 @@ class CocoroHandler(SimpleHTTPRequestHandler):
         connection.commit()
         connection.close()
         json_response(self, {"ok": True})
+
+    def handle_message(self, payload):
+        author = str(payload.get("author", "")).strip()
+        message = str(payload.get("message", "")).strip()
+        if not message:
+            json_response(self, {"error": "missing_message"}, status=400)
+            return
+        if len(author) > 24:
+            json_response(self, {"error": "author_too_long"}, status=400)
+            return
+        if len(message) > 220:
+            json_response(self, {"error": "message_too_long"}, status=400)
+            return
+        connection = get_connection()
+        connection.execute(
+            "INSERT INTO messages (author, message, created_at) VALUES (?, ?, ?)",
+            (author or "Anonymous", message, now_iso()),
+        )
+        connection.commit()
+        connection.close()
+        json_response(self, {"ok": True, "messages": fetch_messages()})
 
 
 def main():
