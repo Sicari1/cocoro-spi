@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cocoro の SPI練習 🌸</title>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════════
+       HEADER
+       ══════════════════════════════════════════════════ -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="hero-shell">
+        <div class="hero-copy">
+          <div class="hero-kicker">Research-backed SPI prep for Cocoro</div>
+          <h1 class="header-title" id="hero-title">Cocoro の SPI準備室</h1>
+          <p class="header-subtitle" id="hero-subtitle">公式キャラクター情報と主要SPI対策サイトの出題形式をもとに、実戦向けに再構成。</p>
+
+          <div class="header-badges">
+            <div class="header-badge" id="header-streak">
+              <span class="badge-icon">🔥</span>
+              <span id="streak-value">0</span>日連続
+            </div>
+            <div class="header-badge" id="header-total">
+              <span class="badge-icon">⭐</span>
+              累計 <span id="total-value">0</span>問正解
+            </div>
+            <div class="header-badge">
+              <span class="badge-icon">🧠</span>
+              言語・非言語・英語
+            </div>
+          </div>
+
+          <div class="hero-links" id="official-links"></div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="cinnamoroll-header">
+            <svg xmlns="http://www.w3.org/2000/svg" width="150" height="120" viewBox="0 0 110 90" role="img" aria-label="シナモロール">
+              <ellipse cx="55" cy="62" rx="36" ry="26" fill="#FFFFFF" />
+              <circle cx="30" cy="60" r="16" fill="#FFFFFF" />
+              <circle cx="80" cy="60" r="16" fill="#FFFFFF" />
+              <circle cx="55" cy="52" r="22" fill="#FFFFFF" />
+              <circle cx="55" cy="34" r="26" fill="#FFFFFF" />
+              <ellipse cx="25" cy="14" rx="9" ry="20" fill="#87CEEB" transform="rotate(-18 25 14)" />
+              <ellipse cx="25" cy="14" rx="5" ry="15" fill="#C8E6F0" transform="rotate(-18 25 14)" />
+              <ellipse cx="85" cy="14" rx="9" ry="20" fill="#87CEEB" transform="rotate(18 85 14)" />
+              <ellipse cx="85" cy="14" rx="5" ry="15" fill="#C8E6F0" transform="rotate(18 85 14)" />
+              <ellipse cx="44" cy="32" rx="6" ry="7" fill="#5A5A7A" />
+              <ellipse cx="66" cy="32" rx="6" ry="7" fill="#5A5A7A" />
+              <circle cx="46" cy="29" r="2" fill="#FFFFFF" />
+              <circle cx="68" cy="29" r="2" fill="#FFFFFF" />
+              <circle cx="43" cy="35" r="1.2" fill="#FFFFFF" />
+              <circle cx="65" cy="35" r="1.2" fill="#FFFFFF" />
+              <ellipse cx="55" cy="40" rx="3" ry="2" fill="#FFB7C5" />
+              <ellipse cx="38" cy="41" rx="7" ry="4" fill="#FFD0DC" opacity="0.55" />
+              <ellipse cx="72" cy="41" rx="7" ry="4" fill="#FFD0DC" opacity="0.55" />
+              <path d="M 49 44 Q 55 50 61 44" fill="none" stroke="#9999BB" stroke-width="1.5" stroke-linecap="round" />
+              <ellipse cx="87" cy="72" rx="8" ry="6" fill="#C8E6F0" transform="rotate(30 87 72)" />
+              <ellipse cx="90" cy="69" rx="5" ry="4" fill="#FFFFFF" transform="rotate(30 90 69)" />
+              <text x="96" y="28" font-size="12" fill="#FFE0A0">✦</text>
+              <text x="8" y="40" font-size="10" fill="#FFB7C5">✦</text>
+            </svg>
+          </div>
+          <div class="hero-photo"></div>
+          <div class="hero-note">
+            シナモロール公式プロフィールの「雲」「カフェ」「やさしい青」をUIモチーフに採用
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════════════
+       TAB NAVIGATION
+       ══════════════════════════════════════════════════ -->
+  <nav class="tab-nav" role="tablist" aria-label="メインナビゲーション">
+    <button class="tab-btn active" data-tab="practice"  role="tab" aria-selected="true"  aria-controls="tab-practice">✏️ 練習問題</button>
+    <button class="tab-btn"        data-tab="database"  role="tab" aria-selected="false" aria-controls="tab-database">📚 問題データベース</button>
+    <button class="tab-btn"        data-tab="exam"      role="tab" aria-selected="false" aria-controls="tab-exam">📝 模擬試験</button>
+    <button class="tab-btn"        data-tab="scores"    role="tab" aria-selected="false" aria-controls="tab-scores">📊 成績管理</button>
+  </nav>
+
+  <!-- ══════════════════════════════════════════════════
+       TAB PANELS
+       ══════════════════════════════════════════════════ -->
+
+  <!-- ────────────────────────────────────────────────
+       TAB 1: 練習問題 (Practice)
+       ──────────────────────────────────────────────── -->
+  <section id="tab-practice" class="tab-panel active" role="tabpanel" aria-labelledby="tab-btn-practice">
+    <div class="main-container">
+
+      <!-- Filter Bar -->
+      <div class="filter-bar" id="practice-filter-bar">
+
+        <!-- Category -->
+        <div class="filter-group">
+          <span class="filter-label">カテゴリ</span>
+          <button class="category-pill active" data-category="all">全て</button>
+          <button class="category-pill" data-category="verbal">言語</button>
+          <button class="category-pill" data-category="nonverbal">非言語</button>
+          <button class="category-pill" data-category="english">英語</button>
+        </div>
+
+        <!-- Type dropdown -->
+        <div class="filter-group">
+          <span class="filter-label">種類</span>
+          <select class="type-select" id="practice-type-select" aria-label="問題種類">
+            <option value="all">全て</option>
+            <option value="vocabulary">語彙</option>
+            <option value="reading">読解</option>
+            <option value="calculation">計算</option>
+            <option value="reasoning">推論</option>
+            <option value="grammar">文法</option>
+          </select>
+        </div>
+
+        <!-- Difficulty -->
+        <div class="filter-group">
+          <span class="filter-label">難易度</span>
+          <button class="category-pill active" data-difficulty="all">全て</button>
+          <button class="category-pill" data-difficulty="1">★</button>
+          <button class="category-pill" data-difficulty="2">★★</button>
+          <button class="category-pill" data-difficulty="3">★★★</button>
+        </div>
+
+        <!-- Shuffle toggle -->
+        <label class="toggle-wrap" title="問題をシャッフルする">
+          <div class="toggle-input">
+            <input type="checkbox" id="practice-shuffle" aria-label="シャッフル">
+            <span class="toggle-slider"></span>
+          </div>
+          <span class="toggle-label">🔀 シャッフル</span>
+        </label>
+
+      </div>
+
+      <!-- Progress bar for current filter -->
+      <div class="progress-container" id="practice-progress-container">
+        <div class="progress-label">
+          <span id="practice-progress-label">フィルター正解率</span>
+          <span id="practice-progress-pct">—</span>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="practice-progress-fill" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- Question card area (rendered by practice.js) -->
+      <div id="practice-question-area">
+        <!-- Loading placeholder -->
+        <div class="question-card" id="practice-question-card">
+          <div class="loading-dots">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+
+        <!-- Explanation panel (slides in after answering) -->
+        <div class="explanation-panel" id="practice-explanation">
+          <div class="explanation-header">
+            <span class="explanation-icon">💡</span>
+            解説
+          </div>
+          <p class="explanation-text" id="practice-explanation-text"></p>
+          <div class="tips-box" id="practice-tips" style="display:none;">
+            <span class="tips-icon">🐾</span>
+            <div class="tips-content" id="practice-tips-text"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation row -->
+      <div class="nav-row" id="practice-nav-row">
+        <button class="btn btn-outline" id="practice-prev-btn" aria-label="前の問題">← 前の問題</button>
+        <span class="question-counter" id="practice-counter">問題 — / —</span>
+        <button class="btn btn-primary" id="practice-next-btn" aria-label="次の問題">次の問題 →</button>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ────────────────────────────────────────────────
+       TAB 2: 問題データベース (Database)
+       ──────────────────────────────────────────────── -->
+  <section id="tab-database" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-database">
+    <div class="main-container">
+
+      <!-- Stats bar -->
+      <div class="stats-bar" id="db-stats-bar">
+        <div class="stat-chip">
+          <span class="stat-value" id="db-total-count">—</span>
+          <div class="stat-label">全問題数</div>
+        </div>
+        <div class="stat-chip">
+          <span class="stat-value" id="db-practiced-count">—</span>
+          <div class="stat-label">練習済み</div>
+        </div>
+        <div class="stat-chip">
+          <span class="stat-value" id="db-avg-accuracy">—%</span>
+          <div class="stat-label">平均正解率</div>
+        </div>
+      </div>
+
+      <!-- Search bar -->
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="search" id="db-search" placeholder="問題を検索…" autocomplete="off" aria-label="問題を検索">
+      </div>
+
+      <!-- Filters -->
+      <div class="filter-bar" id="db-filter-bar">
+
+        <div class="filter-group">
+          <span class="filter-label">カテゴリ</span>
+          <button class="category-pill active" data-db-category="all">全て</button>
+          <button class="category-pill" data-db-category="verbal">言語</button>
+          <button class="category-pill" data-db-category="nonverbal">非言語</button>
+          <button class="category-pill" data-db-category="english">英語</button>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">種類</span>
+          <select class="type-select" id="db-type-select" aria-label="問題種類フィルター">
+            <option value="all">全て</option>
+            <option value="vocabulary">語彙</option>
+            <option value="reading">読解</option>
+            <option value="calculation">計算</option>
+            <option value="reasoning">推論</option>
+            <option value="grammar">文法</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">難易度</span>
+          <button class="category-pill active" data-db-difficulty="all">全て</button>
+          <button class="category-pill" data-db-difficulty="1">★</button>
+          <button class="category-pill" data-db-difficulty="2">★★</button>
+          <button class="category-pill" data-db-difficulty="3">★★★</button>
+        </div>
+
+        <label class="toggle-wrap">
+          <div class="toggle-input">
+            <input type="checkbox" id="db-unplayed-only" aria-label="未練習のみ">
+            <span class="toggle-slider"></span>
+          </div>
+          <span class="toggle-label">未練習のみ</span>
+        </label>
+
+      </div>
+
+      <!-- Question list -->
+      <div class="question-list" id="db-list" aria-live="polite">
+        <div class="empty-state">
+          <div class="empty-icon">📭</div>
+          <div class="empty-text">問題を読み込み中…</div>
+        </div>
+      </div>
+
+      <!-- Detail panel (shown when a question is clicked) -->
+      <div class="detail-panel" id="db-detail" role="region" aria-label="問題詳細">
+        <div class="section-title">
+          <span class="section-icon">📋</span>
+          問題詳細
+        </div>
+        <div id="db-detail-content">
+          <!-- Rendered by database.js -->
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ────────────────────────────────────────────────
+       TAB 3: 模擬試験 (Exam)
+       ──────────────────────────────────────────────── -->
+  <section id="tab-exam" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-exam">
+    <div class="main-container">
+
+      <!-- ─── Sub-view: Setup ─────────────────────── -->
+      <div id="exam-setup" class="exam-view active">
+
+        <div class="card">
+          <div class="card-title">
+            <span>📚</span> 出題カテゴリを選択
+          </div>
+          <div class="exam-category-grid" id="exam-category-grid">
+            <div class="exam-category-card" data-exam-category="all">
+              <div class="cat-icon">🌈</div>
+              <div class="cat-name">全カテゴリ</div>
+            </div>
+            <div class="exam-category-card" data-exam-category="verbal">
+              <div class="cat-icon">📖</div>
+              <div class="cat-name">言語</div>
+            </div>
+            <div class="exam-category-card" data-exam-category="nonverbal">
+              <div class="cat-icon">🔢</div>
+              <div class="cat-name">非言語</div>
+            </div>
+            <div class="exam-category-card" data-exam-category="english">
+              <div class="cat-icon">🌍</div>
+              <div class="cat-name">英語</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span>🔢</span> 問題数を選択
+          </div>
+          <div class="count-btns" id="exam-count-btns">
+            <button class="count-btn active" data-count="10">10問</button>
+            <button class="count-btn" data-count="20">20問</button>
+            <button class="count-btn" data-count="30">30問</button>
+            <button class="count-btn" data-count="50">50問</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span>⏱️</span> タイマー設定
+          </div>
+          <div class="filter-group">
+            <button class="category-pill active" data-timer="none">タイマーなし</button>
+            <button class="category-pill" data-timer="30">各30秒</button>
+            <button class="category-pill" data-timer="60">各60秒</button>
+            <button class="category-pill" data-timer="600">10分全体</button>
+            <button class="category-pill" data-timer="1800">30分全体</button>
+          </div>
+        </div>
+
+        <div class="text-center mt-16">
+          <button class="btn btn-primary btn-lg" id="exam-start-btn">
+            🐾 試験を開始する
+          </button>
+        </div>
+
+      </div>
+      <!-- end exam-setup -->
+
+      <!-- ─── Sub-view: Running ────────────────────── -->
+      <div id="exam-running" class="exam-view">
+
+        <!-- Timer -->
+        <div class="exam-timer" id="exam-timer-container">
+          <div class="timer-display" id="exam-timer-display">--:--</div>
+          <div class="timer-label">残り時間</div>
+        </div>
+
+        <!-- Progress dots -->
+        <div class="progress-dots" id="exam-progress-dots" role="list" aria-label="問題進捗">
+          <!-- Dots rendered by exam.js -->
+        </div>
+
+        <!-- Question card area -->
+        <div id="exam-question-area">
+          <div class="question-card" id="exam-question-card">
+            <div class="loading-dots">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+
+          <!-- Explanation (shown after answering in exam) -->
+          <div class="explanation-panel" id="exam-explanation">
+            <div class="explanation-header">
+              <span class="explanation-icon">💡</span>
+              解説
+            </div>
+            <p class="explanation-text" id="exam-explanation-text"></p>
+          </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-row" id="exam-nav-row">
+          <button class="btn btn-outline" id="exam-prev-btn">← 前の問題</button>
+          <span class="question-counter" id="exam-counter">問題 — / —</span>
+          <button class="btn btn-primary" id="exam-next-btn">次の問題 →</button>
+        </div>
+
+        <div class="text-center mt-16">
+          <button class="btn btn-outline btn-sm" id="exam-abort-btn">試験を終了する</button>
+        </div>
+
+      </div>
+      <!-- end exam-running -->
+
+      <!-- ─── Sub-view: Results ─────────────────────── -->
+      <div id="exam-results" class="exam-view">
+
+        <div class="card text-center">
+          <div class="card-title flex-center gap-8">
+            <span>🎊</span> 試験結果
+          </div>
+
+          <!-- Score circle -->
+          <div class="score-circle-wrapper">
+            <div class="score-circle" id="exam-score-circle" style="--score-pct: 0%;">
+              <div class="score-inner">
+                <div class="score-number" id="exam-score-number">0/0</div>
+                <div class="score-pct" id="exam-score-pct">0%</div>
+              </div>
+            </div>
+            <p class="mt-8 text-muted" id="exam-result-message" style="font-size:0.88rem; font-weight:700;"></p>
+          </div>
+
+          <!-- Breakdown table -->
+          <table class="breakdown-table" id="exam-breakdown">
+            <thead>
+              <tr>
+                <th>カテゴリ</th>
+                <th>正解</th>
+                <th>問題数</th>
+                <th>正解率</th>
+              </tr>
+            </thead>
+            <tbody id="exam-breakdown-body">
+              <!-- Rendered by exam.js -->
+            </tbody>
+          </table>
+
+          <!-- Action buttons -->
+          <div class="flex gap-8 flex-center" style="flex-wrap:wrap;">
+            <button class="btn btn-primary" id="exam-retry-btn">🔄 もう一度</button>
+            <button class="btn btn-outline" id="exam-review-btn">📋 答え合わせ</button>
+            <button class="btn btn-accent"  id="exam-tosetup-btn">⚙️ 設定に戻る</button>
+          </div>
+        </div>
+
+      </div>
+      <!-- end exam-results -->
+
+    </div>
+  </section>
+
+
+  <!-- ────────────────────────────────────────────────
+       TAB 4: 成績管理 (Scores)
+       ──────────────────────────────────────────────── -->
+  <section id="tab-scores" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-scores">
+    <div class="main-container">
+
+      <!-- Streak card -->
+      <div class="streak-card" id="streak-card">
+        <div class="streak-fire">🔥</div>
+        <div class="streak-info">
+          <div class="streak-number" id="scores-streak-number">0</div>
+          <div class="streak-label">日連続ログイン中！</div>
+          <div class="streak-sub" id="scores-streak-sub">今日も一緒に頑張ろう ☁️</div>
+        </div>
+        <div style="text-align:right; flex-shrink:0;">
+          <div style="font-size:1.5rem; font-weight:800; color:var(--primary-dark);" id="scores-total-correct">0</div>
+          <div style="font-size:0.75rem; font-weight:700; color:var(--text-light);">累計正解</div>
+        </div>
+      </div>
+
+      <!-- Score history chart -->
+      <div class="card">
+        <div class="card-title">
+          <span>📈</span> スコア推移
+        </div>
+        <div class="svg-chart" id="score-chart">
+          <svg id="score-chart-svg" viewBox="0 0 600 160" preserveAspectRatio="xMidYMid meet" role="img" aria-label="スコア推移グラフ">
+            <!-- Rendered by scores.js -->
+            <text x="300" y="88" text-anchor="middle" fill="#9999BB" font-size="13" font-family="M PLUS Rounded 1c, sans-serif">
+              まだデータがありません
+            </text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Heatmap -->
+      <div class="card">
+        <div class="card-title">
+          <span>📅</span> 練習カレンダー
+        </div>
+        <div class="heatmap-container">
+          <div class="heatmap" id="heatmap" role="grid" aria-label="学習ヒートマップ">
+            <!-- Rendered by scores.js -->
+          </div>
+        </div>
+        <div class="flex gap-8 mt-8" style="align-items:center; font-size:0.75rem; color:var(--text-light); font-weight:700;">
+          <span>少ない</span>
+          <div class="heatmap-cell" data-level="0" style="display:inline-block;"></div>
+          <div class="heatmap-cell" data-level="1" style="display:inline-block;"></div>
+          <div class="heatmap-cell" data-level="2" style="display:inline-block;"></div>
+          <div class="heatmap-cell" data-level="3" style="display:inline-block;"></div>
+          <div class="heatmap-cell" data-level="4" style="display:inline-block;"></div>
+          <span>多い</span>
+        </div>
+      </div>
+
+      <!-- Weak areas -->
+      <div class="card">
+        <div class="card-title">
+          <span>⚠️</span> 苦手エリア
+        </div>
+        <div id="weak-areas">
+          <div class="empty-state">
+            <div class="empty-icon">🌸</div>
+            <div class="empty-text">まだデータがありません</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recommendations -->
+      <div class="card">
+        <div class="card-title">
+          <span>🐾</span> シナモのおすすめ
+        </div>
+        <div id="recommendations">
+          <div class="empty-state">
+            <div class="empty-icon">☁️</div>
+            <div class="empty-text">おすすめを計算中…</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category accuracy stats -->
+      <div class="card">
+        <div class="card-title">
+          <span>📊</span> カテゴリ別正解率
+        </div>
+        <div id="category-stats">
+          <div class="stat-row">
+            <span class="stat-name">言語</span>
+            <div style="flex:1; margin: 0 12px;">
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" id="stat-verbal-bar" style="width:0%"></div>
+              </div>
+            </div>
+            <span class="stat-val" id="stat-verbal-pct">—%</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-name">非言語</span>
+            <div style="flex:1; margin: 0 12px;">
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" id="stat-nonverbal-bar" style="width:0%"></div>
+              </div>
+            </div>
+            <span class="stat-val" id="stat-nonverbal-pct">—%</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-name">英語</span>
+            <div style="flex:1; margin: 0 12px;">
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" id="stat-english-bar" style="width:0%"></div>
+              </div>
+            </div>
+            <span class="stat-val" id="stat-english-pct">—%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Achievements -->
+      <div class="card">
+        <div class="card-title">
+          <span>🏆</span> 実績バッジ
+        </div>
+        <div class="achievements-grid" id="achievements">
+          <!-- Rendered by scores.js -->
+
+          <!-- Placeholder badges -->
+          <div class="badge unearned">
+            <div class="badge-icon-wrap">🌟</div>
+            <div class="badge-name">初めての正解</div>
+          </div>
+          <div class="badge unearned">
+            <div class="badge-icon-wrap">🔥</div>
+            <div class="badge-name">3日連続</div>
+          </div>
+          <div class="badge unearned">
+            <div class="badge-icon-wrap">💯</div>
+            <div class="badge-name">100問達成</div>
+          </div>
+          <div class="badge unearned">
+            <div class="badge-icon-wrap">🎯</div>
+            <div class="badge-name">全問正解</div>
+          </div>
+          <div class="badge unearned">
+            <div class="badge-icon-wrap">🚀</div>
+            <div class="badge-name">速攻解答</div>
+          </div>
+          <div class="badge unearned">
+            <div class="badge-icon-wrap">☁️</div>
+            <div class="badge-name">シナモ仲間</div>
+          </div>
+          <div class="badge unearned">
+            <div class="badge-icon-wrap">📚</div>
+            <div class="badge-name">全カテゴリ制覇</div>
+          </div>
+          <div class="badge unearned">
+            <div class="badge-icon-wrap">👑</div>
+            <div class="badge-name">SPI マスター</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════
+       TOAST NOTIFICATION
+       ══════════════════════════════════════════════════ -->
+  <div id="toast" class="toast hidden" role="alert" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- ══════════════════════════════════════════════════
+       MODAL (generic, controlled by JS)
+       ══════════════════════════════════════════════════ -->
+  <div class="modal-overlay hidden" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">確認</h2>
+        <button class="modal-close" id="modal-close-btn" aria-label="閉じる">✕</button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <!-- Dynamic content -->
+      </div>
+      <div class="modal-footer" id="modal-footer">
+        <button class="btn btn-outline" id="modal-cancel-btn">キャンセル</button>
+        <button class="btn btn-primary" id="modal-confirm-btn">確認</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-title">Source Policy</div>
+      <p>問題文は主要SPI対策サイトの公開例題・出題形式を参考に、学習用として改題・再構成しています。キャラクターテーマは Sanrio 公式プロフィールを参照しています。</p>
+    </div>
+  </footer>
+
+
+  <!-- ══════════════════════════════════════════════════
+       SCRIPTS (order matters)
+       ══════════════════════════════════════════════════ -->
+  <script src="js/questions.js"></script>
+  <script src="js/scores.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/practice.js"></script>
+  <script src="js/database.js"></script>
+  <script src="js/exam.js"></script>
+
+</body>
+</html>

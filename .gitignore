@@ -1,0 +1,14 @@
+.DS_Store
+.claude/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+*.sqlite3
+*.db
+*.tmp
+*.swp
+*.swo
+*.Identifier
+*.Zone.Identifier
