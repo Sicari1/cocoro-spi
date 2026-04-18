@@ -2,18 +2,47 @@
 import json
 import os
 import sqlite3
-from datetime import datetime, timedelta
+import time
+from collections import defaultdict, deque
+from datetime import UTC, datetime, timedelta
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlparse
 
-BASE_DIR = Path("/home/seongjin/Cocoro")
-DB_PATH = BASE_DIR / "cocoro_spi.db"
+BASE_DIR = Path(__file__).resolve().parent
+DB_DIR = Path(os.environ.get("DATA_DIR") or os.environ.get("RENDER_DISK_PATH") or "/tmp")
+DB_DIR.mkdir(parents=True, exist_ok=True)
+DB_PATH = DB_DIR / "cocoro_spi.db"
 USER_NAME = "Cocoro"
+MAX_BODY_BYTES = 64 * 1024
+RATE_LIMIT_WINDOW_SECONDS = 60
+RATE_LIMIT_MAX_REQUESTS = 90
+RATE_LIMITS = defaultdict(deque)
 
 
 def now_iso():
-    return datetime.utcnow().isoformat(timespec="seconds") + "Z"
+    return datetime.now(UTC).isoformat(timespec="seconds").replace("+00:00", "Z")
+
+
+def utc_today():
+    return datetime.now(UTC).date()
+
+
+def client_ip(handler):
+    forwarded = handler.headers.get("X-Forwarded-For", "").split(",")[0].strip()
+    return forwarded or handler.client_address[0]
+
+
+def rate_limited(handler):
+    ip = client_ip(handler)
+    now = time.time()
+    queue = RATE_LIMITS[ip]
+    while queue and now - queue[0] > RATE_LIMIT_WINDOW_SECONDS:
+      queue.popleft()
+    if len(queue) >= RATE_LIMIT_MAX_REQUESTS:
+        return True
+    queue.append(now)
+    return False
 
 
 def label_category(value):
@@ -291,8 +320,10 @@ def build_seed_questions():
 
 
 def get_connection():
-    connection = sqlite3.connect(DB_PATH)
+    connection = sqlite3.connect(DB_PATH, timeout=10)
     connection.row_factory = sqlite3.Row
+    connection.execute("PRAGMA journal_mode=WAL")
+    connection.execute("PRAGMA busy_timeout=10000")
     return connection
 
 
@@ -453,7 +484,7 @@ def fetch_summary():
         previous_date = day_date
 
     current = 0
-    today = datetime.utcnow().date()
+    today = utc_today()
     for offset in range(365):
         check = today - timedelta(days=offset)
         if check.isoformat() in daily:
@@ -546,6 +577,22 @@ class CocoroHandler(SimpleHTTPRequestHandler):
 
     def end_headers(self):
         self.send_header("Cache-Control", "no-store")
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("X-Frame-Options", "DENY")
+        self.send_header("Referrer-Policy", "strict-origin-when-cross-origin")
+        self.send_header("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+        self.send_header(
+            "Content-Security-Policy",
+            "default-src 'self'; "
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+            "font-src 'self' https://fonts.gstatic.com data:; "
+            "img-src 'self' data:; "
+            "script-src 'self'; "
+            "connect-src 'self'; "
+            "object-src 'none'; "
+            "base-uri 'self'; "
+            "frame-ancestors 'none';",
+        )
         super().end_headers()
 
     def do_GET(self):
@@ -561,8 +608,14 @@ class CocoroHandler(SimpleHTTPRequestHandler):
         return super().do_GET()
 
     def do_POST(self):
+        if rate_limited(self):
+            json_response(self, {"error": "rate_limited"}, status=429)
+            return
         parsed = urlparse(self.path)
         length = int(self.headers.get("Content-Length", "0"))
+        if length > MAX_BODY_BYTES:
+            json_response(self, {"error": "payload_too_large"}, status=413)
+            return
         raw = self.rfile.read(length) if length else b"{}"
         try:
             payload = json.loads(raw.decode("utf-8"))
@@ -587,6 +640,15 @@ class CocoroHandler(SimpleHTTPRequestHandler):
         if not question_id or category is None or qtype is None:
             json_response(self, {"error": "missing_fields"}, status=400)
             return
+        if selected_index not in (0, 1, 2, 3):
+            json_response(self, {"error": "invalid_choice"}, status=400)
+            return
+        if category not in {"verbal", "nonverbal", "english"}:
+            json_response(self, {"error": "invalid_category"}, status=400)
+            return
+        if qtype not in {"vocabulary", "reading", "calculation", "reasoning", "grammar"}:
+            json_response(self, {"error": "invalid_type"}, status=400)
+            return
         connection = get_connection()
         row = connection.execute("SELECT * FROM attempts WHERE question_id = ?", (question_id,)).fetchone()
         wrong_choices = []
@@ -610,7 +672,7 @@ class CocoroHandler(SimpleHTTPRequestHandler):
             """,
             (question_id, USER_NAME, attempts, correct, now_iso(), json.dumps(wrong_choices), category, qtype),
         )
-        day = datetime.utcnow().date().isoformat()
+        day = utc_today().isoformat()
         connection.execute(
             """
             INSERT INTO daily_activity (day, count)
@@ -627,6 +689,12 @@ class CocoroHandler(SimpleHTTPRequestHandler):
         required = ["category", "score", "total", "percent", "breakdown", "questionIds"]
         if not all(key in payload for key in required):
             json_response(self, {"error": "missing_fields"}, status=400)
+            return
+        if payload["category"] not in {"all", "verbal", "nonverbal", "english"}:
+            json_response(self, {"error": "invalid_category"}, status=400)
+            return
+        if not isinstance(payload["questionIds"], list) or len(payload["questionIds"]) > 100:
+            json_response(self, {"error": "invalid_question_ids"}, status=400)
             return
         connection = get_connection()
         connection.execute(
@@ -657,7 +725,7 @@ def main():
     init_db()
     port = int(os.environ.get("PORT", "8080"))
     server = ThreadingHTTPServer(("0.0.0.0", port), CocoroHandler)
-    print(f"Serving Cocoro SPI app on http://0.0.0.0:{port}")
+    print(f"Serving Cocoro SPI app on http://0.0.0.0:{port} with db {DB_PATH}")
     server.serve_forever()
 
 
