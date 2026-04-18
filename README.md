@@ -33,3 +33,9 @@ http://localhost:8080
 `render.yaml` is included for Render deployment.
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Sicari1/cocoro-spi)
+
+Current runtime fixes include:
+
+- Render-safe database path selection
+- Basic security headers
+- Request size limiting
