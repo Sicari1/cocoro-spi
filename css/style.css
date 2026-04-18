@@ -2053,17 +2053,62 @@ body {
   }
 
   .hero-visual {
-    min-height: 270px;
+    min-height: 320px;
+    padding: 12px;
   }
 
   .hero-sticker {
-    width: 82px;
-    height: 82px;
+    width: 70px;
+    height: 70px;
+    padding: 5px;
+    border-radius: 16px;
+  }
+
+  .hero-photo {
+    background-position: right 10px bottom 22px, center center, center;
+    background-size: 58%, cover, cover;
+  }
+
+  .hero-visual .cinnamoroll-header {
+    width: 92px;
+    height: 92px;
+    top: 10px;
+    left: 10px;
+    border-radius: 20px;
+  }
+
+  .hero-visual .cinnamoroll-header svg {
+    width: 110px;
+    height: 88px;
+  }
+
+  .hero-sticker-a {
+    right: 12px;
+    top: 12px;
   }
 
   .hero-sticker-b {
-    right: 94px;
-    top: 92px;
+    right: 78px;
+    top: 72px;
+  }
+
+  .hero-sticker-c {
+    left: 12px;
+    bottom: 96px;
+  }
+
+  .hero-note {
+    left: 12px;
+    right: 12px;
+    bottom: 14px;
+    padding: 12px 14px;
+    font-size: 0.8rem;
+    line-height: 1.55;
+  }
+
+  .hero-secret-dot {
+    right: 10px;
+    bottom: 10px;
   }
 
   .header-title {
@@ -2137,6 +2182,25 @@ body {
 @media (max-width: 380px) {
   .header-title {
     font-size: 1.2rem;
+  }
+
+  .hero-visual {
+    min-height: 292px;
+  }
+
+  .hero-sticker {
+    width: 60px;
+    height: 60px;
+  }
+
+  .hero-sticker-b {
+    right: 68px;
+    top: 66px;
+  }
+
+  .hero-note {
+    font-size: 0.74rem;
+    padding: 10px 12px;
   }
 
   .choice-btn {

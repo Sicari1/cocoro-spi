@@ -3,6 +3,8 @@
   const state = {
     heroClicks: 0,
     footerClicks: 0,
+    noteTapCount: 0,
+    noteTapTimer: null,
     practiceCorrectStreak: 0,
     unlocked: loadUnlocked(),
   };
@@ -50,13 +52,23 @@
       });
     }
     if (note) {
-      note.addEventListener("dblclick", () => {
-        unlock(
-          "cloud-note",
-          "Cloud Note",
-          "青い雲の下で、ココと一緒に落ち着いて積み上げる。そういう準備の仕方がいちばん強いです。"
-        );
-      });
+      const tapHandler = () => {
+        state.noteTapCount += 1;
+        window.clearTimeout(state.noteTapTimer);
+        state.noteTapTimer = window.setTimeout(() => {
+          state.noteTapCount = 0;
+        }, 700);
+        if (state.noteTapCount >= 3) {
+          state.noteTapCount = 0;
+          unlock(
+            "cloud-note",
+            "Cloud Note",
+            "青い雲の下で、ココと一緒に落ち着いて積み上げる。そういう準備の仕方がいちばん強いです。"
+          );
+        }
+      };
+      note.addEventListener("click", tapHandler);
+      note.addEventListener("touchend", tapHandler, { passive: true });
     }
     if (footerTitle) {
       footerTitle.addEventListener("click", () => {
